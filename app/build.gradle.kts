@@ -68,7 +68,11 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+    
+    // Icons
+    implementation(libs.material.icons.extended)
 
     // Room
     implementation(libs.androidx.room.runtime)

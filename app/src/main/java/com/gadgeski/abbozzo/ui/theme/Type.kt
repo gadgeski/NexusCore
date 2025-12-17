@@ -2,13 +2,20 @@ package com.gadgeski.abbozzo.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.gadgeski.abbozzo.R
+
+val BbhBartle = FontFamily(
+    Font(R.font.bbh_bartle_regular, FontWeight.Normal),
+    Font(R.font.bbh_bartle_regular, FontWeight.Bold) // Reuse regular for bold if no bold file, or let system synthesize
+)
 
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
+        fontFamily = BbhBartle,
         fontWeight = FontWeight.Bold,
         fontSize = 57.sp,
         lineHeight = 64.sp,
@@ -16,7 +23,7 @@ val Typography = Typography(
         color = WhiteHighContrast
     ),
     displayMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
+        fontFamily = BbhBartle,
         fontWeight = FontWeight.Bold,
         fontSize = 45.sp,
         lineHeight = 52.sp,

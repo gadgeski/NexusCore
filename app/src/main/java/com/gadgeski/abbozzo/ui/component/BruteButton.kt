@@ -13,7 +13,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gadgeski.abbozzo.ui.theme.NeonPurple
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import com.gadgeski.abbozzo.ui.theme.DarkRedBlack
+import com.gadgeski.abbozzo.ui.theme.DarkRedSurface
+import com.gadgeski.abbozzo.ui.theme.Vermilion
 import com.gadgeski.abbozzo.ui.theme.WhiteHighContrast
 
 @Composable
@@ -21,30 +27,42 @@ fun BruteButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = NeonPurple,
+    containerColor: Color = Color.Transparent, // Not used directly logic-wise for gradient, but kept for compatibility if passed
     contentColor: Color = WhiteHighContrast
 ) {
+    val gradientBrush = androidx.compose.ui.graphics.Brush.verticalGradient(
+        colors = listOf(
+            com.gadgeski.abbozzo.ui.theme.DarkRedSurface,
+            com.gadgeski.abbozzo.ui.theme.DarkRedBlack
+        )
+    )
+
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        shape = CutCornerShape(0.dp), // Sharp edges
+        shape = CutCornerShape(0.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
+            containerColor = Color.Transparent,
             contentColor = contentColor
         ),
-        border = BorderStroke(1.dp, Color.White), // Minimal border
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp,
-            pressedElevation = 0.dp
-        )
+        border = BorderStroke(1.dp, Vermilion), // Bright border
+        elevation = ButtonDefaults.buttonElevation(0.dp) // Flat industrial look
     ) {
-        Text(
-            text = text.uppercase(),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
-        )
+        // Gradient background box
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gradientBrush),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text.uppercase(),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+        }
     }
 }

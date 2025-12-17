@@ -1,14 +1,11 @@
 package com.gadgeski.abbozzo.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gadgeski.abbozzo.ui.component.BruteButton
@@ -57,10 +53,10 @@ fun CaptureScreen(
                     Text("WAITING_SIGNAL...", style = MaterialTheme.typography.titleLarge)
                 }
                 is CaptureUiState.Saving -> {
-                    Text("SAVING_DATA...", style = MaterialTheme.typography.displayMedium, color = NeonPurple)
+                    Text("SAVING_DATA...", style = MaterialTheme.typography.displayMedium, color = com.gadgeski.abbozzo.ui.theme.MagmaOrange)
                 }
                 is CaptureUiState.Success -> {
-                    Text("LOG_SECURED", style = MaterialTheme.typography.displayLarge, color = AcidGreen)
+                    Text("LOG_SECURED", style = MaterialTheme.typography.displayLarge, color = com.gadgeski.abbozzo.ui.theme.Vermilion)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Content Length: ${sharedText?.length ?: 0} chars",
