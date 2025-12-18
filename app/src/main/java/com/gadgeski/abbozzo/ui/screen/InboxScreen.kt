@@ -26,10 +26,14 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.alpha
-import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +56,8 @@ import com.gadgeski.abbozzo.ui.theme.DarkSurface
 import com.gadgeski.abbozzo.ui.theme.GrayText
 import com.gadgeski.abbozzo.ui.theme.NeonCyan
 import com.gadgeski.abbozzo.ui.theme.NeonPurple
+import com.gadgeski.abbozzo.ui.theme.Vermilion
+import com.gadgeski.abbozzo.ui.theme.MagmaOrange
 
 @Composable
 fun InboxScreen(
@@ -60,7 +66,23 @@ fun InboxScreen(
     val logs by viewModel.logs.collectAsState()
     val context = LocalContext.current
 
-    Scaffold { padding ->
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.addDebugLog() },
+                containerColor = Vermilion,
+                contentColor = Color.White,
+                shape = CutCornerShape(20.dp),
+                elevation = FloatingActionButtonDefaults.elevation(0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Log",
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+        }
+    ) { padding ->
         NoiseBackground(Modifier.padding(padding))
 
         Column(modifier = Modifier
@@ -71,8 +93,8 @@ fun InboxScreen(
             // Header with Gradient and Glow
             val titleGradient = androidx.compose.ui.graphics.Brush.linearGradient(
                 colors = listOf(
-                    com.gadgeski.abbozzo.ui.theme.Vermilion,
-                    com.gadgeski.abbozzo.ui.theme.MagmaOrange
+                    Vermilion,
+                    MagmaOrange
                 )
             )
             
@@ -84,7 +106,7 @@ fun InboxScreen(
                     fontSize = 40.sp,
                     brush = titleGradient,
                     shadow = androidx.compose.ui.graphics.Shadow(
-                        color = com.gadgeski.abbozzo.ui.theme.Vermilion,
+                        color = Vermilion,
                         offset = androidx.compose.ui.geometry.Offset(0f, 0f),
                         blurRadius = 20f
                     )
@@ -113,7 +135,7 @@ fun InboxScreen(
                     Icon(
                         imageVector = Icons.Default.BrokenImage, // Represents broken data
                         contentDescription = "No Data",
-                        tint = com.gadgeski.abbozzo.ui.theme.Vermilion,
+                        tint = Vermilion,
                         modifier = Modifier
                             .size(64.dp)
                             .padding(bottom = 32.dp) // Increased spacing
@@ -123,7 +145,7 @@ fun InboxScreen(
                     Text(
                         text = "NO DATA",
                         style = MaterialTheme.typography.displayMedium, // Large and Bold (uses BbhBartle by default for DisplayMedium now)
-                        color = com.gadgeski.abbozzo.ui.theme.MagmaOrange,
+                        color = MagmaOrange,
                         modifier = Modifier.padding(bottom = 8.dp),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
@@ -135,12 +157,6 @@ fun InboxScreen(
                         modifier = Modifier.padding(bottom = 32.dp),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
-
-                    com.gadgeski.abbozzo.ui.component.BruteButton(
-                        text = "DEBUG ADD",
-                        onClick = { viewModel.addDebugLog() },
-                        modifier = Modifier.padding(horizontal = 48.dp)
-                    )
                 }
             } else {
                 LazyColumn(
@@ -148,13 +164,19 @@ fun InboxScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(logs) { log ->
-                        LogCard(log = log, onCopy = {
-                            val formatted = "Fix this error:\n```\n${log.content}\n```"
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("Error Log", formatted)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, "COPIED TO CLIPBOARD", Toast.LENGTH_SHORT).show()
-                        })
+                        LogCard(
+                            log = log,
+                            onCopy = {
+                                val formatted = "Fix this error:\n```\n${log.content}\n```"
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("Error Log", formatted)
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, "COPIED TO CLIPBOARD", Toast.LENGTH_SHORT).show()
+                            },
+                            onDelete = {
+                                viewModel.deleteLog(log)
+                            }
+                        )
                     }
                 }
             }
@@ -163,7 +185,7 @@ fun InboxScreen(
 }
 
 @Composable
-fun LogCard(log: LogEntry, onCopy: () -> Unit) {
+fun LogCard(log: LogEntry, onCopy: () -> Unit, onDelete: () -> Unit) {
     Card(
         shape = CutCornerShape(topEnd = 16.dp),
         colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -181,11 +203,22 @@ fun LogCard(log: LogEntry, onCopy: () -> Unit) {
                     style = MaterialTheme.typography.labelSmall,
                     color = NeonPurple
                 )
-                Text(
-                    text = log.formattedDate,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = GrayText
-                )
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = log.formattedDate,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = GrayText
+                    )
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Delete",
+                            tint = Vermilion,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
             
             Spacer(modifier = Modifier.height(8.dp))

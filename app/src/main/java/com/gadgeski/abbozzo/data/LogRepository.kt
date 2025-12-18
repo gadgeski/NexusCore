@@ -8,4 +8,8 @@ class LogRepository @Inject constructor(private val logDao: LogDao) {
     suspend fun addLog(content: String, tag: String = "General") {
         logDao.insertLog(LogEntry(content = content, tag = tag))
     }
+
+    suspend fun deleteLog(log: LogEntry) {
+        logDao.deleteLog(log)
+    }
 }

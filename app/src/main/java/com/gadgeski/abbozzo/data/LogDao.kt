@@ -13,4 +13,7 @@ interface LogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: LogEntry)
+
+    @androidx.room.Delete
+    suspend fun deleteLog(log: LogEntry)
 }
