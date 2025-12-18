@@ -54,10 +54,9 @@ class InboxViewModel @Inject constructor(
         _selectedTag.value = tag
     }
 
-    fun addDebugLog() {
-        val dummy = "Exception in thread \"main\" java.lang.NullPointerException: The \"life\" object is null. #bug #critical\n\tat com.universe.Existence.meaning(Existence.java:42)\n\tat com.humanity.Reality.check(Reality.java:101)"
+    fun addLog(content: String) {
         viewModelScope.launch { 
-            repository.addLog(dummy, "DEBUG_SYS")
+            repository.addLog(content, "USER_LOG")
         }
     }
 
