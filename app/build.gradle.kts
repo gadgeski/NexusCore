@@ -8,12 +8,14 @@ plugins {
 
 android {
     namespace = "com.gadgeski.abbozzo"
-    compileSdk = 34
+    // 旧: compileSdk = 34
+    // 新: ライブラリの要求に合わせて 35 に変更
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.gadgeski.abbozzo"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
