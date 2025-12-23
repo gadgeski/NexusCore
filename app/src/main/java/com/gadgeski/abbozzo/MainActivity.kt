@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         // Handle intent if activity is created/recreated
-        handleSendIntent(intent)
+        handleSendText(intent)
 
         setContent {
             AbbozzoTheme {
@@ -48,14 +48,18 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent) // Update the intent property
-        handleSendIntent(intent)
+        handleSendText(intent)
     }
 
-    private fun handleSendIntent(intent: Intent) {
+    private fun handleSendText(intent: Intent) {
         if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
             intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
-                inboxViewModel.addLog(sharedText)
-                Toast.makeText(this, "Saved via Abbozzo", Toast.LENGTH_SHORT).show()
+                if (sharedText.isNotBlank()) {
+                    inboxViewModel.addLog(sharedText)
+                    Toast.makeText(this, "Saved via Abbozzo", Toast.LENGTH_SHORT).show()
+                    // Prevent duplicate saving on configuration changes
+                    intent.removeExtra(Intent.EXTRA_TEXT)
+                }
             }
         }
     }
