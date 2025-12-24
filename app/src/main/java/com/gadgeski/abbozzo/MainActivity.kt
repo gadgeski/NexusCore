@@ -73,13 +73,16 @@ fun AppNavigation() {
     // 変更後: "inbox" に変更します
     NavHost(navController = navController, startDestination = "inbox") {
         composable("inbox") {
-            InboxScreen()
+            InboxScreen(
+                onNavigateToCapture = { navController.navigate("capture") }
+            )
         }
         composable("capture") {
             CaptureScreen(
-                sharedText = null, // Intent handling is done in MainActivity now
                 onNavigateToInbox = {
-                    navController.navigate("inbox")
+                    navController.navigate("inbox") {
+                        popUpTo("inbox") { inclusive = true } // Clear stack to avoid loop
+                    }
                 }
             )
         }

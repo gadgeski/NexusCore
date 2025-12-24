@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -42,19 +41,11 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -64,7 +55,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gadgeski.abbozzo.data.LogEntry
 import com.gadgeski.abbozzo.ui.component.NoiseBackground
@@ -77,6 +67,7 @@ import com.gadgeski.abbozzo.ui.theme.Vermilion
 
 @Composable
 fun InboxScreen(
+    onNavigateToCapture: () -> Unit,
     viewModel: InboxViewModel = hiltViewModel()
 ) {
     val logs by viewModel.logs.collectAsState()
@@ -84,25 +75,12 @@ fun InboxScreen(
     val selectedTag by viewModel.selectedTag.collectAsState()
     val context = LocalContext.current
 
-    // 【修正点】by remember をやめて、Stateオブジェクトとして保持し、rememberSaveableに変更
-    // これにより画面回転してもダイアログの状態が保持され、かつ警告が出にくくなります
-    val showDialog = rememberSaveable { mutableStateOf(false) }
 
-    // .value でアクセスすることで「確実に使っている」ことをコンパイラに伝えます
-    if (showDialog.value) {
-        AddLogDialog(
-            onDismiss = { showDialog.value = false },
-            onSave = { text ->
-                viewModel.addLog(text)
-                showDialog.value = false
-            }
-        )
-    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog.value = true }, // ここも .value で代入
+                onClick = onNavigateToCapture,
                 containerColor = Vermilion,
                 contentColor = Color.White,
                 shape = CutCornerShape(20.dp),
@@ -312,99 +290,6 @@ fun CyberpunkChip(
             ),
             color = if (isSelected) textColor.copy(alpha = glowAlpha) else textColor
         )
-    }
-}
-
-@Composable
-fun AddLogDialog(
-    onDismiss: () -> Unit,
-    onSave: (String) -> Unit
-) {
-    var text by remember { mutableStateOf("") }
-
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = CutCornerShape(16.dp),
-            color = Color.Black.copy(alpha = 0.9f),
-            border = BorderStroke(2.dp, Vermilion),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .shadow(elevation = 20.dp, shape = CutCornerShape(16.dp), spotColor = Vermilion)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "INITIALIZE LOG",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        color = MagmaOrange,
-                        letterSpacing = 2.sp,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                    ),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    placeholder = {
-                        Text(
-                            "Input data... use #tag to classify",
-                            color = GrayText.copy(alpha = 0.5f),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.White),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Vermilion,
-                        unfocusedIndicatorColor = Vermilion.copy(alpha = 0.5f),
-                        cursorColor = Vermilion
-                    ),
-                    shape = CutCornerShape(8.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(
-                            "CANCEL",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                color = GrayText,
-                                letterSpacing = 1.sp
-                            )
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    TextButton(
-                        // 入力されたtextがここで確実に使われます
-                        onClick = { if (text.isNotBlank()) onSave(text) },
-                        enabled = text.isNotBlank()
-                    ) {
-                        Text(
-                            "SAVE",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                color = if (text.isNotBlank()) Vermilion else GrayText.copy(alpha = 0.3f),
-                                letterSpacing = 1.sp,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                            )
-                        )
-                    }
-                }
-            }
-        }
     }
 }
 
