@@ -69,7 +69,9 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "capture") {
+    // 変更前: startDestination = "capture"
+    // 変更後: "inbox" に変更します
+    NavHost(navController = navController, startDestination = "inbox") {
         composable("inbox") {
             InboxScreen()
         }
