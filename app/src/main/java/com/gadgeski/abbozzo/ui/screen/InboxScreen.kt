@@ -89,6 +89,11 @@ import com.gadgeski.abbozzo.ui.theme.Vermilion
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.gadgeski.abbozzo.ui.component.AbbozzoLinkText
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material.icons.filled.Delete
 
 @Composable
 fun InboxScreen(
@@ -272,7 +277,11 @@ fun InboxScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    itemsIndexed(logs) { index, log ->
+                ) {
+                    itemsIndexed(
+                        items = logs,
+                        key = { _, log -> log.id }
+                    ) { index, log ->
                         // Animation State
                         val alpha = remember { Animatable(0f) }
                         val translationY = remember { Animatable(50f) }
@@ -297,39 +306,67 @@ fun InboxScreen(
                             }
                         }
 
-                        LogCard(
-                            log = log,
-                            modifier = Modifier
-                                .graphicsLayer {
-                                    this.alpha = alpha.value
-                                    this.translationY = translationY.value.dp.toPx()
-                                },
-                            onClick = { onLogClick(log.id) },
-                            onCopy = {
-                                val formatted = "Fix this error:\n```\n${log.content}\n```"
-                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText("Error Log", formatted)
-                                clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, "COPIED TO CLIPBOARD", Toast.LENGTH_SHORT).show()
-                            },
-                            onDelete = {
-                                // 1行削除（インライン化）します
-                                viewModel.deleteLog(log)
-                                // 直接 log を使う
-
-                                scope.launch {
-                                    val result = snackbarHostState.showSnackbar(
-                                        message = "LOG DELETED",
-                                        actionLabel = "UNDO",
-                                        duration = SnackbarDuration.Short
-                                    )
-                                    if (result == SnackbarResult.ActionPerformed) {
-                                        viewModel.restoreLog(log)
-                                // ここも直接 log でOK
+                        // Swipe to Dismiss State
+                        val currentLog = log 
+                        val dismissState = rememberSwipeToDismissBoxState(
+                            confirmValueChange = {
+                                if (it == SwipeToDismissBoxValue.EndToStart) {
+                                    // Trigger Delete
+                                    viewModel.deleteLog(currentLog)
+                                    scope.launch {
+                                        val result = snackbarHostState.showSnackbar(
+                                            message = "LOG_ENTRY_PURGED",
+                                            actionLabel = "UNDO",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                        if (result == SnackbarResult.ActionPerformed) {
+                                            viewModel.restoreLog()
+                                        }
                                     }
+                                    true
+                                } else {
+                                    false
                                 }
                             }
                         )
+
+                        SwipeToDismissBox(
+                            state = dismissState,
+                            backgroundContent = { DeleteBackground(dismissState) },
+                            enableDismissFromStartToEnd = false,
+                            modifier = Modifier.animateItem() // Smooth reordering
+                        ) {
+                            LogCard(
+                                log = log,
+                                modifier = Modifier
+                                    .graphicsLayer {
+                                        this.alpha = alpha.value
+                                        this.translationY = translationY.value.dp.toPx()
+                                    },
+                                onClick = { onLogClick(log.id) },
+                                onCopy = {
+                                    val formatted = "Fix this error:\n```\n${log.content}\n```"
+                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                    val clip = ClipData.newPlainText("Error Log", formatted)
+                                    clipboard.setPrimaryClip(clip)
+                                    Toast.makeText(context, "COPIED TO CLIPBOARD", Toast.LENGTH_SHORT).show()
+                                },
+                                onDelete = {
+                                    // Manual delete button logic
+                                    viewModel.deleteLog(log)
+                                    scope.launch {
+                                        val result = snackbarHostState.showSnackbar(
+                                            message = "LOG_ENTRY_PURGED",
+                                            actionLabel = "UNDO",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                        if (result == SnackbarResult.ActionPerformed) {
+                                            viewModel.restoreLog()
+                                        }
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -495,5 +532,28 @@ fun LogCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DeleteBackground(swipeDismissState: SwipeToDismissBoxState) {
+    val color = if (swipeDismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
+        Vermilion // Abbozzo Vermilion
+    } else {
+        Color.Transparent
+    }
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color, shape = CutCornerShape(topEnd = 16.dp)) // Match LogCard shape
+            .padding(horizontal = 20.dp),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete",
+            tint = Color.White
+        )
     }
 }

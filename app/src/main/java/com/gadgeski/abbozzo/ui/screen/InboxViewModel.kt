@@ -71,12 +71,25 @@ class InboxViewModel @Inject constructor(
         }
     }
 
+    private var lastDeletedLog: LogEntry? = null
+
     fun deleteLog(log: LogEntry) {
+        lastDeletedLog = log
         viewModelScope.launch {
             repository.deleteLog(log)
         }
     }
 
+    fun restoreLog() {
+        lastDeletedLog?.let { log ->
+            viewModelScope.launch {
+                repository.addLog(log.content, log.tag, log.id)
+                lastDeletedLog = null
+            }
+        }
+    }
+
+    // Keep this for manual undo if needed, but primary is parameterless restoreLog()
     fun restoreLog(log: LogEntry) {
         viewModelScope.launch {
             repository.addLog(log.content, log.tag, log.id)
