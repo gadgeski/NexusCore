@@ -4,11 +4,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -28,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -44,15 +48,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -61,13 +66,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.launch
 import com.gadgeski.abbozzo.data.LogEntry
 import com.gadgeski.abbozzo.ui.component.NoiseBackground
 import com.gadgeski.abbozzo.ui.theme.DarkSurface
@@ -76,6 +86,8 @@ import com.gadgeski.abbozzo.ui.theme.MagmaOrange
 import com.gadgeski.abbozzo.ui.theme.NeonCyan
 import com.gadgeski.abbozzo.ui.theme.NeonPurple
 import com.gadgeski.abbozzo.ui.theme.Vermilion
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun InboxScreen(
@@ -101,7 +113,8 @@ fun InboxScreen(
                     contentColor = Color.White,
                     actionColor = Vermilion,
                     shape = CutCornerShape(topEnd = 16.dp),
-                    actionContentColor = Vermilion // Explicitly set action content color
+                    actionContentColor = Vermilion
+                // Explicitly set action content color
                 )
             }
         },
@@ -128,7 +141,7 @@ fun InboxScreen(
             .padding(padding)) {
 
             // Header with Gradient and Glow
-            val titleGradient = androidx.compose.ui.graphics.Brush.linearGradient(
+            val titleGradient = Brush.linearGradient(
                 colors = listOf(
                     Vermilion,
                     MagmaOrange
@@ -142,9 +155,9 @@ fun InboxScreen(
                 style = MaterialTheme.typography.displayMedium.copy(
                     fontSize = 40.sp,
                     brush = titleGradient,
-                    shadow = androidx.compose.ui.graphics.Shadow(
+                    shadow = Shadow(
                         color = Vermilion,
-                        offset = androidx.compose.ui.geometry.Offset(0f, 0f),
+                        offset = Offset(0f, 0f),
                         blurRadius = 20f
                     )
                 ),
@@ -177,7 +190,8 @@ fun InboxScreen(
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
                             Icon(
-                                imageVector = Icons.Default.Clear, // Use Clear instead of Close for semantics
+                                imageVector = Icons.Default.Clear,
+                                // Use Clear instead of Close for semantics
                                 contentDescription = "Clear",
                                 tint = GrayText
                             )
@@ -224,13 +238,16 @@ fun InboxScreen(
                     )
 
                     Icon(
-                        imageVector = Icons.Default.BrokenImage, // Represents broken data
+                        imageVector = Icons.Default.BrokenImage,
+                        // Represents broken data
                         contentDescription = "No Data",
                         tint = Vermilion,
                         modifier = Modifier
                             .size(64.dp)
-                            .padding(bottom = 32.dp) // Increased spacing
-                            .alpha(if (System.currentTimeMillis() % 10 > 5) alpha else 0.8f) // Chaotic flicker
+                            .padding(bottom = 32.dp)
+                            // Increased spacing
+                            .alpha(if (System.currentTimeMillis() % 10 > 5) alpha else 0.8f)
+                        // Chaotic flicker
                     )
 
                     Text(
@@ -238,15 +255,15 @@ fun InboxScreen(
                         style = MaterialTheme.typography.displayMedium,
                         color = MagmaOrange,
                         modifier = Modifier.padding(bottom = 8.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center
                     )
 
                     Text(
                         text = "Share text to save.",
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = Color(0xFFEEEEEE),
                         modifier = Modifier.padding(bottom = 32.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center
                     )
                 }
             } else {
@@ -254,9 +271,38 @@ fun InboxScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(logs) { log ->
+                    itemsIndexed(logs) { index, log ->
+                        // Animation State
+                        val alpha = remember { Animatable(0f) }
+                        val translationY = remember { Animatable(50f) }
+
+                        LaunchedEffect(Unit) {
+                            delay(index * 50L)
+                            // Stagger delay
+                            launch {
+                                alpha.animateTo(
+                                    targetValue = 1f,
+                                    animationSpec = tween(durationMillis = 300)
+                                )
+                            }
+                            launch {
+                                translationY.animateTo(
+                                    targetValue = 0f,
+                                    animationSpec = spring(
+                                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
+                            }
+                        }
+
                         LogCard(
                             log = log,
+                            modifier = Modifier
+                                .graphicsLayer {
+                                    this.alpha = alpha.value
+                                    this.translationY = translationY.value.dp.toPx()
+                                },
                             onClick = { onLogClick(log.id) },
                             onCopy = {
                                 val formatted = "Fix this error:\n```\n${log.content}\n```"
@@ -373,7 +419,7 @@ fun CyberpunkChip(
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp
             ),
             color = if (isSelected) textColor.copy(alpha = glowAlpha) else textColor
@@ -382,13 +428,19 @@ fun CyberpunkChip(
 }
 
 @Composable
-fun LogCard(log: LogEntry, onClick: () -> Unit, onCopy: () -> Unit, onDelete: () -> Unit) {
+fun LogCard(
+    log: LogEntry,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onCopy: () -> Unit,
+    onDelete: () -> Unit
+) {
     Card(
         onClick = onClick,
         shape = CutCornerShape(topEnd = 16.dp),
         colors = CardDefaults.cardColors(containerColor = DarkSurface),
         border = BorderStroke(1.dp, NeonCyan.copy(alpha = 0.5f)),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
