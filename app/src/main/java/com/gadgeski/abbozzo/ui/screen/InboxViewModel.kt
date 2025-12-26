@@ -76,4 +76,10 @@ class InboxViewModel @Inject constructor(
             repository.deleteLog(log)
         }
     }
+
+    fun restoreLog(log: LogEntry) {
+        viewModelScope.launch {
+            repository.addLog(log.content, log.tag, log.id)
+        }
+    }
 }
