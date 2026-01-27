@@ -1,5 +1,5 @@
 ```
-Abbozzo/
+NexusCore/
 ├── Readme.md
 ├── STRUCTURE.md
 ├── app
@@ -10,7 +10,7 @@ Abbozzo/
 │       │   └── java
 │       │       └── com
 │       │           └── gadgeski
-│       │               └── abbozzo
+│       │               └── nexuscore
 │       │                   └── ExampleInstrumentedTest.kt
 │       ├── main
 │       │   ├── AndroidManifest.xml
@@ -18,9 +18,9 @@ Abbozzo/
 │       │   ├── java
 │       │   │   └── com
 │       │   │       └── gadgeski
-│       │   │           └── abbozzo
-│       │   │               ├── AbbozzoApplication.kt
+│       │   │           └── nexuscore
 │       │   │               ├── MainActivity.kt
+│       │   │               ├── NexusCoreApplication.kt
 │       │   │               ├── data
 │       │   │               │   ├── AppDatabase.kt
 │       │   │               │   ├── LogDao.kt
@@ -48,7 +48,6 @@ Abbozzo/
 │       │       │   └── ic_launcher_foreground.xml
 │       │       ├── font
 │       │       │   └── bbh_bartle_regular.ttf
-│       │       ├── mipmap-anydpi
 │       │       ├── mipmap-anydpi-v26
 │       │       │   ├── ic_launcher.xml
 │       │       │   └── ic_launcher_round.xml
@@ -83,9 +82,12 @@ Abbozzo/
 │           └── java
 │               └── com
 │                   └── gadgeski
-│                       └── abbozzo
+│                       └── nexuscore
 │                           └── ExampleUnitTest.kt
 ├── build.gradle.kts
+├── docs
+│   └── img
+│       └── Abbozzo_Home.png
 ├── gradle
 │   ├── libs.versions.toml
 │   └── wrapper
@@ -97,5 +99,5 @@ Abbozzo/
 ├── local.properties
 └── settings.gradle.kts
 
-38 directories, 59 files
+39 directories, 60 files
 ```
