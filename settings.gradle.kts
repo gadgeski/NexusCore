@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Abbozzo"
+rootProject.name = "NexusCore"
 include(":app")

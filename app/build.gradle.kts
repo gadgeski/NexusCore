@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.gadgeski.abbozzo"
+    namespace = "com.gadgeski.nexuscore"
     // 旧: compileSdk = 34
     // 新: ライブラリの要求に合わせて 35 に変更
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.gadgeski.abbozzo"
+        applicationId = "com.gadgeski.nexuscore"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
