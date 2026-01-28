@@ -1,16 +1,27 @@
 package com.gadgeski.nexuscore.data
 
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class LogRepository @Inject constructor(private val logDao: LogDao) {
-    val allLogs = logDao.getAllLogs()
+@Singleton
+class LogRepository @Inject constructor(
+    private val logDao: LogDao
+) {
+    // UIが監視するデータストリーム
+    val allLogs: Flow<List<LogEntry>> = logDao.getAllLogs()
 
-    suspend fun getLogById(id: Long): LogEntry? = logDao.getLogById(id)
-
-    suspend fun addLog(content: String, tag: String = "General", id: Long = 0) {
-        logDao.insertLog(LogEntry(id = id, content = content, tag = tag))
+    // ログを追加する
+    suspend fun addLog(content: String, mode: NexusMode = NexusMode.ABBOZZO) {
+        val entry = LogEntry(
+            content = content,
+            mode = mode
+            // timestamp, id は自動生成
+        )
+        logDao.insertLog(entry)
     }
 
+    // ログを削除する
     suspend fun deleteLog(log: LogEntry) {
         logDao.deleteLog(log)
     }

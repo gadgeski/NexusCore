@@ -21,8 +21,11 @@ object AppModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "abbozzo_db"
-        ).build()
+            "abbozzo_db" // 既存のDB名を維持
+        )
+            // 開発フェーズ用: スキーマ変更時（Ver 1 -> 2等）にクラッシュせず、DBを再作成する安全装置
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
