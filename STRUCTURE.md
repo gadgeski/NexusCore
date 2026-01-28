@@ -23,6 +23,7 @@ NexusCore/
 │       │   │               ├── NexusCoreApplication.kt
 │       │   │               ├── data
 │       │   │               │   ├── AppDatabase.kt
+│       │   │               │   ├── Converters.kt
 │       │   │               │   ├── LogDao.kt
 │       │   │               │   ├── LogEntry.kt
 │       │   │               │   └── LogRepository.kt
@@ -30,8 +31,11 @@ NexusCore/
 │       │   │               │   └── AppModule.kt
 │       │   │               └── ui
 │       │   │                   ├── components
+│       │   │                   │   ├── AbbozzoInput.kt
 │       │   │                   │   └── NoiseBackground.kt
 │       │   │                   ├── screens
+│       │   │                   │   ├── HomeViewModel.kt
+│       │   │                   │   └── NexusHome.kt
 │       │   │                   └── theme
 │       │   │                       ├── Color.kt
 │       │   │                       ├── Theme.kt
@@ -92,5 +96,5 @@ NexusCore/
 ├── local.properties
 └── settings.gradle.kts
 
-39 directories, 53 files
+39 directories, 57 files
 ```
