@@ -29,15 +29,9 @@ NexusCore/
 │       │   │               ├── di
 │       │   │               │   └── AppModule.kt
 │       │   │               └── ui
-│       │   │                   ├── component
-│       │   │                   │   ├── AbbozzoLinkText.kt
-│       │   │                   │   ├── BruteButton.kt
+│       │   │                   ├── components
 │       │   │                   │   └── NoiseBackground.kt
-│       │   │                   ├── screen
-│       │   │                   │   ├── CaptureScreen.kt
-│       │   │                   │   ├── CaptureViewModel.kt
-│       │   │                   │   ├── InboxScreen.kt
-│       │   │                   │   └── InboxViewModel.kt
+│       │   │                   ├── screens
 │       │   │                   └── theme
 │       │   │                       ├── Color.kt
 │       │   │                       ├── Theme.kt
@@ -87,7 +81,6 @@ NexusCore/
 ├── build.gradle.kts
 ├── docs
 │   └── img
-│       └── Abbozzo_Home.png
 ├── gradle
 │   ├── libs.versions.toml
 │   └── wrapper
@@ -99,5 +92,5 @@ NexusCore/
 ├── local.properties
 └── settings.gradle.kts
 
-39 directories, 60 files
+39 directories, 53 files
 ```
