@@ -52,16 +52,24 @@ fun NexusHome(
                 .fillMaxSize()
                 .systemBarsPadding() // コンテンツは安全圏内に表示
         ) {
-            // Header
-            Box(
+            // Header: Visual Identity fixed
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
+                // Main Title: Bbh Bartle (Extra Bold)
                 Text(
-                    text = "NEXUS_CORE // STORAGE",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                    text = "NEXUS_CORE",
+                    style = MaterialTheme.typography.displayMedium, // Type.ktでBbh Bartleが定義されているスタイル
+                    color = MaterialTheme.colorScheme.primary,
+                    lineHeight = 50.sp // 行間を少し詰めて塊感を出す
+                )
+                // Sub Title: Monospace
+                Text(
+                    text = "// STORAGE_SYSTEM :: ONLINE",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                 )
             }
 
@@ -99,6 +107,7 @@ fun NexusHome(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .systemBarsPadding() // ナビゲーションバーを避ける
+                .padding(bottom = 16.dp) // 【修正点】余白を追加して窮屈さを解消
         ) {
             AbbozzoInput(
                 onSend = { message ->

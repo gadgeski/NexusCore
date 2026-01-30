@@ -17,17 +17,19 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gadgeski.nexuscore.ui.theme.Vermilion
+import com.gadgeski.nexuscore.ui.theme.NeonPurple
 import kotlin.random.Random
 
 @Composable
 fun NoiseBackground(
     modifier: Modifier = Modifier
 ) {
-    // ノイズの不透明度をアニメーションさせて「揺らぎ」を作る
     val infiniteTransition = rememberInfiniteTransition(label = "noise_anim")
+
+    // アルファ値を全体的に底上げ (0.02f -> 0.15f程度まで上げる)
     val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.02f,
-        targetValue = 0.08f,
+        initialValue = 0.05f,
+        targetValue = 0.15f,
         animationSpec = infiniteRepeatable(
             animation = tween(100, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
@@ -35,7 +37,6 @@ fun NoiseBackground(
         label = "alpha"
     )
 
-    // スキャンラインの位置をゆっくり移動させる（オプション）
     val scanlineOffset by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 20f,
@@ -51,39 +52,37 @@ fun NoiseBackground(
         val height = size.height
 
         // 1. Scanlines (走査線)
-        // CRTモニターのような横縞を描画
-        // Removed unused variable 'lineHeight' to fix warning
+        // 修正点: 黒背景で見えるように「白」に変更し、アルファ値を調整
         val gap = 4.dp.toPx()
-        var y = -scanlineOffset // アニメーションで少し動かす
+        var y = -scanlineOffset
 
         while (y < height) {
             drawRect(
-                color = Color.Black.copy(alpha = 0.3f),
+                color = Color.White.copy(alpha = 0.03f), // 【修正】白く薄く光らせる
                 topLeft = Offset(0f, y),
-                size = Size(width, 1f) // 極細の線
+                size = Size(width, 1f)
             )
             y += gap
         }
 
         // 2. Random Grain Noise (粒子ノイズ)
-        // 画面全体にランダムなドットを散らす（重くなりすぎない程度に）
-        // ※描画負荷を下げるため、簡易的に矩形をランダム配置
-        repeat(50) {
+        repeat(80) { // 【修正】粒子数を50 -> 80に増加
             val randomX = Random.nextFloat() * width
             val randomY = Random.nextFloat() * height
-            val randomSize = Random.nextFloat() * 3.dp.toPx()
+            // 【修正】サイズを少し大きくして視認性アップ
+            val randomWidth = Random.nextFloat() * 4.dp.toPx()
+            val randomHeight = 1.dp.toPx()
+
+            // 色をランダムに変化（朱色 or ネオンパープル）
+            val noiseColor = if (Random.nextBoolean()) Vermilion else NeonPurple
 
             drawRect(
-                color = Vermilion, // テーマカラーの朱色を微かに混ぜる
+                color = noiseColor,
                 topLeft = Offset(randomX, randomY),
-                size = Size(randomSize, 1f), // 横長のノイズ
-                alpha = alpha * Random.nextFloat(), // 明滅
-                blendMode = BlendMode.Screen
+                size = Size(randomWidth, randomHeight),
+                alpha = alpha * Random.nextFloat(),
+                blendMode = BlendMode.Screen // 黒背景に加算合成
             )
         }
-
-        // 3. Vignette (四隅を暗くする) - 簡易実装
-        // 没入感を高めるために外周を暗く塗ることは効果的ですが、
-        // 今回はシンプルにNoiseだけに留めます。
     }
 }
