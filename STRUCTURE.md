@@ -43,7 +43,8 @@ NexusCore/
 │       │   └── res
 │       │       ├── drawable
 │       │       │   ├── ic_launcher_background.xml
-│       │       │   └── ic_launcher_foreground.xml
+│       │       │   ├── ic_launcher_foreground.xml
+│       │       │   └── ic_launcher_monochrome.xml
 │       │       ├── font
 │       │       │   └── bbh_bartle_regular.ttf
 │       │       ├── mipmap-anydpi-v26
@@ -96,5 +97,5 @@ NexusCore/
 ├── local.properties
 └── settings.gradle.kts
 
-39 directories, 57 files
+39 directories, 58 files
 ```
