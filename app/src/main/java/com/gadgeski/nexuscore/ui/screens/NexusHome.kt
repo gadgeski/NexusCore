@@ -27,26 +27,32 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gadgeski.nexuscore.data.LogEntry
 import com.gadgeski.nexuscore.data.NexusMode
 import com.gadgeski.nexuscore.ui.components.AbbozzoInput
+import com.gadgeski.nexuscore.ui.components.NoiseBackground
 
 @Composable
 fun NexusHome(
-    // HiltからViewModelを注入。ここでHomeViewModelが初めてインスタンス化されます。
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // データベースの変更を監視 (StateFlow -> Compose State)
-    // これにより HomeViewModel.logList の参照警告が解消されます
     val logs by viewModel.logList.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding() // Edge-to-Edge対応
+        // ここで systemBarsPadding をしない！背景はステータスバー裏まで広げるため。
     ) {
-        Column(
+        // 1. Background Layer (Visual Injection)
+        NoiseBackground(
             modifier = Modifier.fillMaxSize()
+        )
+
+        // 2. Content Layer
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding() // コンテンツは安全圏内に表示
         ) {
-            // Header: アプリの状態を示すヘッダー
+            // Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -59,7 +65,7 @@ fun NexusHome(
                 )
             }
 
-            // Log Stream: データベースの中身を表示
+            // Log Stream
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -84,53 +90,51 @@ fun NexusHome(
                 }
             }
 
-            // Input Fieldとの余白
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // Input Field: 画面下部に固定
-        AbbozzoInput(
-            onSend = { message ->
-                // 入力イベントをViewModelへ送信
-                // これにより HomeViewModel.onInputReceived の参照警告が解消されます
-                viewModel.onInputReceived(message)
-            },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        // 3. Input Layer (Bottom Fixed)
+        // 入力欄もキーボード等のためにsystemBarsPaddingの影響を受ける必要がある
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .systemBarsPadding() // ナビゲーションバーを避ける
+        ) {
+            AbbozzoInput(
+                onSend = { message ->
+                    viewModel.onInputReceived(message)
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun LogItem(log: LogEntry) {
-    // モードに応じたアクセントカラーを決定
     val accentColor = when (log.mode) {
-        NexusMode.ABBOZZO -> MaterialTheme.colorScheme.primary // Vermilion
-        NexusMode.DAILY_SYNC -> Color(0xFFD4AF37) // Mustard
-        NexusMode.BUG_MEMO -> Color(0xFF64FFDA)   // Cyan
+        NexusMode.ABBOZZO -> MaterialTheme.colorScheme.primary
+        NexusMode.DAILY_SYNC -> Color(0xFFD4AF37)
+        NexusMode.BUG_MEMO -> Color(0xFF64FFDA)
     }
 
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Mode Indicator Line (左側のカラーバー)
         Box(
             modifier = Modifier
                 .width(4.dp)
-                .height(40.dp) // 高さは最低限を確保
+                .height(40.dp)
                 .background(accentColor)
         )
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column {
-            // ログ本文
             Text(
                 text = "> ${log.content}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            // メタデータ（日付とモード）
-            // LogEntry.formattedDate の参照警告がここで解消されます
             Text(
                 text = "${log.formattedDate} :: ${log.mode.name}",
                 style = MaterialTheme.typography.labelSmall,
