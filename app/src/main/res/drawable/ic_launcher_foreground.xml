@@ -5,38 +5,24 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Path Data for Blocky "N" -->
-    <!-- M 34,29 V 79 H 46 V 48 L 66,79 H 78 V 29 H 66 V 60 L 46,29 Z -->
-
-    <!-- Layer 1: Left Ghost (Vermilion / Red) -->
-    <!-- Shifted Left by 2dp -->
-    <group android:translateX="-2">
+    <!-- Layer 1: The Hot Pink Shadow (Extrusion) -->
+    <!-- ピンク色の太い影を背面に配置 -->
+    <group
+        android:translateX="-2"
+        android:translateY="2">
         <path
-            android:fillColor="#FF4500"
-            android:fillAlpha="0.8"
-            android:pathData="M34,29 V79 H46 V48 L66,79 H78 V29 H66 V60 L46,29 Z" />
+            android:fillColor="#FF0099"
+            android:pathData="M30,29 L44,29 L44,56 L64,29 L78,29 L78,79 L64,79 L64,52 L44,79 L30,79 Z"
+            android:strokeWidth="6"
+            android:strokeColor="#FF0099"
+            android:strokeLineJoin="round"
+            />
     </group>
 
-    <!-- Layer 2: Right Ghost (Neon Purple) -->
-    <!-- Shifted Right by 2dp -->
-    <group android:translateX="2">
-        <path
-            android:fillColor="#D300FF"
-            android:fillAlpha="0.8"
-            android:pathData="M34,29 V79 H46 V48 L66,79 H78 V29 H66 V60 L46,29 Z" />
-    </group>
+    <!-- Layer 2: The Main White Body -->
+    <!-- 白いN本体 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,29 L44,29 L44,56 L64,29 L78,29 L78,79 L64,79 L64,52 L44,79 L30,79 Z" />
 
-    <!-- Layer 3: Main Body (White High Contrast) -->
-    <!-- Center, but slightly cut to show glitch beneath -->
-    <group>
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M34,29 V79 H46 V48 L66,79 H78 V29 H66 V60 L46,29 Z" />
-
-        <!-- Optional: Glitch Slice (Horizontal Cut) -->
-        <!-- 中央を一筋のノイズが走る -->
-        <path
-            android:fillColor="#050505"
-            android:pathData="M30,52 h48 v2 h-48 z" />
-    </group>
 </vector>

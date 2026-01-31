@@ -5,10 +5,10 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Monochrome Silhouette: Pure White "N" -->
-    <!-- The system will tint this shape with the user's wallpaper theme color. -->
+    <!-- Theme Icon Silhouette -->
+    <!-- テーマアイコン用の単色シルエット -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M34,29 V79 H46 V48 L66,79 H78 V29 H66 V60 L46,29 Z" />
+        android:pathData="M30,29 L44,29 L44,56 L64,29 L78,29 L78,79 L64,79 L64,52 L44,79 L30,79 Z" />
 
 </vector>
