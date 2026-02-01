@@ -5,24 +5,22 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Layer 1: The Hot Pink Shadow (Extrusion) -->
-    <!-- ピンク色の太い影を背面に配置 -->
+    <!-- Layer 1: The Hot Pink Shadow (Corrected N) -->
     <group
         android:translateX="-2"
         android:translateY="2">
         <path
             android:fillColor="#FF0099"
-            android:pathData="M30,29 L44,29 L44,56 L64,29 L78,29 L78,79 L64,79 L64,52 L44,79 L30,79 Z"
+            android:pathData="M 30,29 L 44,29 L 64,56 L 64,29 L 78,29 L 78,79 L 64,79 L 44,52 L 44,79 L 30,79 Z"
             android:strokeWidth="6"
             android:strokeColor="#FF0099"
             android:strokeLineJoin="round"
             />
     </group>
 
-    <!-- Layer 2: The Main White Body -->
-    <!-- 白いN本体 -->
+    <!-- Layer 2: The Main White Body (Corrected N) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M30,29 L44,29 L44,56 L64,29 L78,29 L78,79 L64,79 L64,52 L44,79 L30,79 Z" />
+        android:pathData="M 30,29 L 44,29 L 64,56 L 64,29 L 78,29 L 78,79 L 64,79 L 44,52 L 44,79 L 30,79 Z" />
 
 </vector>
