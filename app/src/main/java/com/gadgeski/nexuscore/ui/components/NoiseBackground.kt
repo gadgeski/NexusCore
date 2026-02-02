@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gadgeski.nexuscore.ui.theme.Vermilion
 import com.gadgeski.nexuscore.ui.theme.NeonPurple
@@ -26,10 +25,11 @@ fun NoiseBackground(
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "noise_anim")
 
-    // アルファ値を全体的に底上げ (0.02f -> 0.15f程度まで上げる)
+    // 【変更点1】 ノイズの基準不透明度を「0.5〜0.8」まで引き上げ
+    // これなら確実に「濃い色」として見えます
     val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.05f,
-        targetValue = 0.15f,
+        initialValue = 0.5f,
+        targetValue = 0.8f,
         animationSpec = infiniteRepeatable(
             animation = tween(100, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
@@ -51,37 +51,38 @@ fun NoiseBackground(
         val width = size.width
         val height = size.height
 
-        // 1. Scanlines (走査線)
-        // 修正点: 黒背景で見えるように「白」に変更し、アルファ値を調整
         val gap = 4.dp.toPx()
         var y = -scanlineOffset
 
         while (y < height) {
             drawRect(
-                color = Color.White.copy(alpha = 0.03f), // 【修正】白く薄く光らせる
+                // 【変更点2】 走査線を「0.3f (30%)」まで強化
+                // 黒背景の上でもはっきりと「暗い赤の縞模様」が見えるはずです
+                color = Vermilion.copy(alpha = 0.3f),
                 topLeft = Offset(0f, y),
                 size = Size(width, 1f)
             )
             y += gap
         }
 
-        // 2. Random Grain Noise (粒子ノイズ)
-        repeat(80) { // 【修正】粒子数を50 -> 80に増加
+        repeat(80) {
             val randomX = Random.nextFloat() * width
             val randomY = Random.nextFloat() * height
-            // 【修正】サイズを少し大きくして視認性アップ
-            val randomWidth = Random.nextFloat() * 4.dp.toPx()
-            val randomHeight = 1.dp.toPx()
 
-            // 色をランダムに変化（朱色 or ネオンパープル）
+            // 【変更点3】 粒子のサイズを巨大化 (横幅最大 20dp)
+            // これで「点」ではなく「線状のノイズ」として認識しやすくします
+            val randomWidth = Random.nextFloat() * 20.dp.toPx()
+            val randomHeight = 2.dp.toPx() // 高さも倍増
+
             val noiseColor = if (Random.nextBoolean()) Vermilion else NeonPurple
 
             drawRect(
                 color = noiseColor,
                 topLeft = Offset(randomX, randomY),
                 size = Size(randomWidth, randomHeight),
-                alpha = alpha * Random.nextFloat(),
-                blendMode = BlendMode.Screen // 黒背景に加算合成
+                // アルファ値のランダム減衰を廃止し、そのまま適用
+                alpha = alpha,
+                blendMode = BlendMode.Screen
             )
         }
     }

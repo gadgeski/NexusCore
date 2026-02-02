@@ -38,34 +38,34 @@ fun NexusHome(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            // 重要: ここ以外で .background を使わないこと！
             .background(MaterialTheme.colorScheme.background)
-        // ここで systemBarsPadding をしない！背景はステータスバー裏まで広げるため。
     ) {
-        // 1. Background Layer (Visual Injection)
+        // [Layer 1] Noise Background
+        // 一番最初に書くことで、最背面に描画されます
         NoiseBackground(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 2. Content Layer
+        // [Layer 2] Content (Text, List)
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .systemBarsPadding() // コンテンツは安全圏内に表示
+                .systemBarsPadding()
+            // ここに .background があるとノイズが消えます。絶対に書かないこと。
         ) {
-            // Header: Visual Identity fixed
+            // Header
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                // Main Title: Bbh Bartle (Extra Bold)
                 Text(
                     text = "NEXUS_CORE",
-                    style = MaterialTheme.typography.displayMedium, // Type.ktでBbh Bartleが定義されているスタイル
+                    style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    lineHeight = 50.sp // 行間を少し詰めて塊感を出す
+                    lineHeight = 50.sp
                 )
-                // Sub Title: Monospace
                 Text(
                     text = "// STORAGE_SYSTEM :: ONLINE",
                     style = MaterialTheme.typography.labelMedium,
@@ -101,13 +101,12 @@ fun NexusHome(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // 3. Input Layer (Bottom Fixed)
-        // 入力欄もキーボード等のためにsystemBarsPaddingの影響を受ける必要がある
+        // [Layer 3] Input Field (Floating on bottom)
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .systemBarsPadding() // ナビゲーションバーを避ける
-                .padding(bottom = 16.dp) // 【修正点】余白を追加して窮屈さを解消
+                .systemBarsPadding()
+                .padding(bottom = 16.dp)
         ) {
             AbbozzoInput(
                 onSend = { message ->
