@@ -6,8 +6,10 @@ import com.gadgeski.nexuscore.data.LogEntry
 import com.gadgeski.nexuscore.data.LogRepository
 import com.gadgeski.nexuscore.data.NexusMode
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,8 +19,7 @@ class HomeViewModel @Inject constructor(
     private val repository: LogRepository
 ) : ViewModel() {
 
-    // UI State: データベースの変更を監視し、常に最新のリストを保持する
-    // WhileSubscribed(5000)により、画面回転時などの一時的な切断で購読を止めない
+    // UI State: データベースの変更を監視
     val logList: StateFlow<List<LogEntry>> = repository.allLogs
         .stateIn(
             scope = viewModelScope,
@@ -26,21 +27,32 @@ class HomeViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    // Current Mode State: 現在選択されている人格（デフォルトはAbbozzo）
+    private val _currentMode = MutableStateFlow(NexusMode.ABBOZZO)
+    val currentMode: StateFlow<NexusMode> = _currentMode.asStateFlow()
+
     /**
-     * AbbozzoInputからの入力を処理
-     * デフォルトではAbbozzoモード（攻撃的メモ）として保存
+     * モード切り替え
+     */
+    fun onModeSelected(mode: NexusMode) {
+        _currentMode.value = mode
+    }
+
+    /**
+     * 入力を処理
+     * 現在選択されているモードをタグとして付与して保存
      */
     fun onInputReceived(content: String) {
         if (content.isBlank()) return
 
         viewModelScope.launch {
-            // 将来的にAIによる自動タグ付けやモード判定ロジックをここに挟む
-            repository.addLog(content, NexusMode.ABBOZZO)
+            // 現在のモードを使用してログを保存
+            repository.addLog(content, _currentMode.value)
         }
     }
 
     /**
-     * ログの削除（スワイプ削除などを想定）
+     * ログの削除
      */
     fun onDeleteRequested(log: LogEntry) {
         viewModelScope.launch {
