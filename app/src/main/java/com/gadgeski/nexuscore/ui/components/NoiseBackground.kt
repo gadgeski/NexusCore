@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gadgeski.nexuscore.ui.theme.Vermilion
 import com.gadgeski.nexuscore.ui.theme.NeonPurple
@@ -21,12 +22,13 @@ import kotlin.random.Random
 
 @Composable
 fun NoiseBackground(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scanlineColor: Color = Vermilion, // 【追加】外部から色を受け取る
+    particleColor: Color = NeonPurple     // 【追加】外部から色を受け取る
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "noise_anim")
 
-    // 【変更点1】 ノイズの基準不透明度を「0.5〜0.8」まで引き上げ
-    // これなら確実に「濃い色」として見えます
+    // ノイズの揺らぎ（視認性ブースト維持）
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.5f,
         targetValue = 0.8f,
@@ -56,9 +58,8 @@ fun NoiseBackground(
 
         while (y < height) {
             drawRect(
-                // 【変更点2】 走査線を「0.3f (30%)」まで強化
-                // 黒背景の上でもはっきりと「暗い赤の縞模様」が見えるはずです
-                color = Vermilion.copy(alpha = 0.3f),
+                // 【変更】引数で受け取った色を使用
+                color = scanlineColor.copy(alpha = 0.3f),
                 topLeft = Offset(0f, y),
                 size = Size(width, 1f)
             )
@@ -68,19 +69,16 @@ fun NoiseBackground(
         repeat(80) {
             val randomX = Random.nextFloat() * width
             val randomY = Random.nextFloat() * height
-
-            // 【変更点3】 粒子のサイズを巨大化 (横幅最大 20dp)
-            // これで「点」ではなく「線状のノイズ」として認識しやすくします
             val randomWidth = Random.nextFloat() * 20.dp.toPx()
-            val randomHeight = 2.dp.toPx() // 高さも倍増
+            val randomHeight = 2.dp.toPx()
 
-            val noiseColor = if (Random.nextBoolean()) Vermilion else NeonPurple
+            // 【変更】指定色とアクセント色をランダムに混ぜる
+            val noiseColor = if (Random.nextBoolean()) scanlineColor else particleColor
 
             drawRect(
                 color = noiseColor,
                 topLeft = Offset(randomX, randomY),
                 size = Size(randomWidth, randomHeight),
-                // アルファ値のランダム減衰を廃止し、そのまま適用
                 alpha = alpha,
                 blendMode = BlendMode.Screen
             )

@@ -38,12 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gadgeski.nexuscore.ui.theme.Vermilion
 
-// Changed to AutoMirrored(androidx.compose.material.icons.automirrored.filled.Send)
-
 @Composable
 fun AbbozzoInput(
     onSend: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    primaryColor: Color = Vermilion, // 【追加】デフォルト色
+    secondaryColor: Color = MaterialTheme.colorScheme.secondary // 【追加】
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -52,12 +52,10 @@ fun AbbozzoInput(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                // Vermilion
+                color = primaryColor, // 【変更】動的カラー適用
                 shape = CutCornerShape(topStart = 16.dp)
             ),
         color = MaterialTheme.colorScheme.surface,
-        // DarkRedSurface
         shape = CutCornerShape(topStart = 16.dp)
     ) {
         Row(
@@ -67,7 +65,7 @@ fun AbbozzoInput(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Voice Input Trigger (Placeholder)
+            // Voice Input Trigger
             IconButton(
                 onClick = { /* TODO: Implement Voice to Glitch */ },
                 modifier = Modifier.size(24.dp)
@@ -75,8 +73,7 @@ fun AbbozzoInput(
                 Icon(
                     imageVector = Icons.Default.Mic,
                     contentDescription = "Voice Input",
-                    tint = MaterialTheme.colorScheme.secondary
-                // NeonPurple
+                    tint = secondaryColor // 【変更】動的カラー適用
                 )
             }
 
@@ -95,7 +92,7 @@ fun AbbozzoInput(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                cursorBrush = SolidColor(Vermilion),
+                cursorBrush = SolidColor(primaryColor), // 【変更】カーソル色も変更
                 singleLine = false,
                 maxLines = 3,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -131,10 +128,9 @@ fun AbbozzoInput(
                     }
                 },
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primary, CutCornerShape(4.dp))
+                    .background(primaryColor, CutCornerShape(4.dp)) // 【変更】ボタン背景も変更
                     .size(36.dp)
             ) {
-                // Warning Resolved: Use AutoMirrored version
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Execute",

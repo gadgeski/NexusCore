@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+// Removed unused import: androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,10 @@ import com.gadgeski.nexuscore.data.LogEntry
 import com.gadgeski.nexuscore.data.NexusMode
 import com.gadgeski.nexuscore.ui.components.AbbozzoInput
 import com.gadgeski.nexuscore.ui.components.NoiseBackground
+import com.gadgeski.nexuscore.ui.theme.Vermilion
+import com.gadgeski.nexuscore.ui.theme.NeonPurple
+import com.gadgeski.nexuscore.ui.theme.NeonCyan
+import com.gadgeski.nexuscore.ui.theme.DailyMustard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,14 +68,30 @@ fun NexusHome(
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
+    // --- Dynamic Theme Logic ---
+    // モードに応じてメインカラーとアクセントカラーを動的に決定
+    val themePrimary = when(currentMode) {
+        NexusMode.ABBOZZO -> Vermilion
+        NexusMode.DAILY_SYNC -> DailyMustard
+        NexusMode.BUG_MEMO -> NeonCyan // 定義済みのシアンを使用
+    }
+
+    val themeSecondary = when(currentMode) {
+        NexusMode.ABBOZZO -> NeonPurple
+        NexusMode.DAILY_SYNC -> Color(0xFFE6DCCD) // Cream
+        NexusMode.BUG_MEMO -> Color(0xFF64FFDA)   // Mint
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // [Layer 1] Noise Background
+        // [Layer 1] Noise Background (Dynamic)
         NoiseBackground(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            scanlineColor = themePrimary, // モード色を注入
+            particleColor = themeSecondary
         )
 
         // [Layer 2] Content
@@ -83,20 +104,19 @@ fun NexusHome(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { showBottomSheet = true } // タップでモード選択へ
+                    .clickable { showBottomSheet = true }
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 Text(
                     text = "NEXUS_CORE",
                     style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = themePrimary, // ヘッダー色も変異
                     lineHeight = 50.sp
                 )
-                // 現在のモードを表示
                 Text(
                     text = "// SYSTEM_MODE :: ${currentMode.name}",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                    color = themePrimary.copy(alpha = 0.8f),
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -131,7 +151,7 @@ fun NexusHome(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // [Layer 3] Input Field
+        // [Layer 3] Input Field (Dynamic)
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -141,7 +161,9 @@ fun NexusHome(
             AbbozzoInput(
                 onSend = { message ->
                     viewModel.onInputReceived(message)
-                }
+                },
+                primaryColor = themePrimary,   // 入力枠線とボタン色
+                secondaryColor = themeSecondary // アイコン色
             )
         }
 
@@ -162,12 +184,18 @@ fun NexusHome(
                         text = "SELECT PROTOCOL",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.primary
+                        color = themePrimary // ここも現在のテーマ色に合わせる
                     )
                     HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
-                    // 各モードの選択肢
                     NexusMode.entries.forEach { mode ->
+                        // 各選択肢のテーマ色を定義
+                        val modeColor = when(mode) {
+                            NexusMode.ABBOZZO -> Vermilion
+                            NexusMode.DAILY_SYNC -> DailyMustard
+                            NexusMode.BUG_MEMO -> NeonCyan
+                        }
+
                         ListItem(
                             headlineContent = {
                                 Text(
@@ -185,12 +213,6 @@ fun NexusHome(
                                 Text(text = description, style = MaterialTheme.typography.labelSmall)
                             },
                             leadingContent = {
-                                // モードカラーのインジケータ
-                                val modeColor = when(mode) {
-                                    NexusMode.ABBOZZO -> MaterialTheme.colorScheme.primary
-                                    NexusMode.DAILY_SYNC -> Color(0xFFD4AF37)
-                                    NexusMode.BUG_MEMO -> Color(0xFF64FFDA)
-                                }
                                 Box(
                                     modifier = Modifier
                                         .size(12.dp)
@@ -199,12 +221,12 @@ fun NexusHome(
                             },
                             colors = ListItemDefaults.colors(
                                 containerColor = Color.Transparent,
-                                headlineColor = if (currentMode == mode) MaterialTheme.colorScheme.primary else Color.White,
+                                headlineColor = if (currentMode == mode) modeColor else Color.White,
                                 supportingColor = Color.Gray
                             ),
                             modifier = Modifier.clickable {
                                 viewModel.onModeSelected(mode)
-                                showBottomSheet = false // 選択したら閉じる
+                                showBottomSheet = false
                             }
                         )
                     }
