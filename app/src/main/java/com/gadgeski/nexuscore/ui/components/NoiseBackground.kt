@@ -23,8 +23,8 @@ import kotlin.random.Random
 @Composable
 fun NoiseBackground(
     modifier: Modifier = Modifier,
-    scanlineColor: Color = Vermilion, // 【追加】外部から色を受け取る
-    particleColor: Color = NeonPurple     // 【追加】外部から色を受け取る
+    scanlineColor: Color = Vermilion,
+    particleColor: Color = NeonPurple
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "noise_anim")
 

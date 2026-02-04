@@ -41,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-// Removed unused import: androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,13 +72,13 @@ fun NexusHome(
     val themePrimary = when(currentMode) {
         NexusMode.ABBOZZO -> Vermilion
         NexusMode.DAILY_SYNC -> DailyMustard
-        NexusMode.BUG_MEMO -> NeonCyan // 定義済みのシアンを使用
+        NexusMode.BUG_MEMO -> NeonCyan
     }
 
     val themeSecondary = when(currentMode) {
         NexusMode.ABBOZZO -> NeonPurple
-        NexusMode.DAILY_SYNC -> Color(0xFFE6DCCD) // Cream
-        NexusMode.BUG_MEMO -> Color(0xFF64FFDA)   // Mint
+        NexusMode.DAILY_SYNC -> Color(0xFFE6DCCD)
+        NexusMode.BUG_MEMO -> Color(0xFF64FFDA)
     }
 
     Box(
@@ -90,7 +89,7 @@ fun NexusHome(
         // [Layer 1] Noise Background (Dynamic)
         NoiseBackground(
             modifier = Modifier.fillMaxSize(),
-            scanlineColor = themePrimary, // モード色を注入
+            scanlineColor = themePrimary,
             particleColor = themeSecondary
         )
 
@@ -110,7 +109,7 @@ fun NexusHome(
                 Text(
                     text = "NEXUS_CORE",
                     style = MaterialTheme.typography.displayMedium,
-                    color = themePrimary, // ヘッダー色も変異
+                    color = themePrimary,
                     lineHeight = 50.sp
                 )
                 Text(
@@ -162,8 +161,8 @@ fun NexusHome(
                 onSend = { message ->
                     viewModel.onInputReceived(message)
                 },
-                primaryColor = themePrimary,   // 入力枠線とボタン色
-                secondaryColor = themeSecondary // アイコン色
+                primaryColor = themePrimary,
+                secondaryColor = themeSecondary
             )
         }
 
@@ -172,7 +171,7 @@ fun NexusHome(
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
-                containerColor = Color(0xFF1A1A1A), // Dark Grey
+                containerColor = Color(0xFF1A1A1A),
                 contentColor = Color.White
             ) {
                 Column(
@@ -184,7 +183,7 @@ fun NexusHome(
                         text = "SELECT PROTOCOL",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(16.dp),
-                        color = themePrimary // ここも現在のテーマ色に合わせる
+                        color = themePrimary
                     )
                     HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
