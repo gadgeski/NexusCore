@@ -22,7 +22,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             NexusCoreTheme {
-                // アプリ全体の背景コンテナ
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

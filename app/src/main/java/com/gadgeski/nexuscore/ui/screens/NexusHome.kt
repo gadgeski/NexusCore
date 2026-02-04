@@ -188,7 +188,6 @@ fun NexusHome(
                     HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
                     NexusMode.entries.forEach { mode ->
-                        // 各選択肢のテーマ色を定義
                         val modeColor = when(mode) {
                             NexusMode.ABBOZZO -> Vermilion
                             NexusMode.DAILY_SYNC -> DailyMustard

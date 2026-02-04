@@ -21,8 +21,8 @@ data class LogEntry(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val content: String,
     val timestamp: Long = System.currentTimeMillis(),
-    val tag: String = "", // 将来的にはカンマ区切りで複数タグ対応予定
-    val mode: NexusMode = NexusMode.ABBOZZO // デフォルトは攻撃的なAbbozzoモード
+    val tag: String = "",
+    val mode: NexusMode = NexusMode.ABBOZZO
 ) {
     val formattedDate: String
         get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timestamp))

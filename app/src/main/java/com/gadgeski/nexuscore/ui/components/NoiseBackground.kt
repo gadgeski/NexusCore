@@ -52,13 +52,11 @@ fun NoiseBackground(
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width
         val height = size.height
-
         val gap = 4.dp.toPx()
         var y = -scanlineOffset
 
         while (y < height) {
             drawRect(
-                // 【変更】引数で受け取った色を使用
                 color = scanlineColor.copy(alpha = 0.3f),
                 topLeft = Offset(0f, y),
                 size = Size(width, 1f)

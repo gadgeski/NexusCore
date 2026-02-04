@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 
 // Version updated to 2 (Schema changed)
 @Database(entities = [LogEntry::class], version = 2, exportSchema = false)
-@TypeConverters(Converters::class) // ここでConvertersを登録し、Enum変換を可能にします
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun logDao(): LogDao
 }

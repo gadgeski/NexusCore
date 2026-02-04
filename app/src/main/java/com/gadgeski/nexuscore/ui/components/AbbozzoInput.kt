@@ -42,8 +42,8 @@ import com.gadgeski.nexuscore.ui.theme.Vermilion
 fun AbbozzoInput(
     onSend: (String) -> Unit,
     modifier: Modifier = Modifier,
-    primaryColor: Color = Vermilion, // 【追加】デフォルト色
-    secondaryColor: Color = MaterialTheme.colorScheme.secondary // 【追加】
+    primaryColor: Color = Vermilion,
+    secondaryColor: Color = MaterialTheme.colorScheme.secondary
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -52,7 +52,7 @@ fun AbbozzoInput(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = primaryColor, // 【変更】動的カラー適用
+                color = primaryColor,
                 shape = CutCornerShape(topStart = 16.dp)
             ),
         color = MaterialTheme.colorScheme.surface,
@@ -73,7 +73,7 @@ fun AbbozzoInput(
                 Icon(
                     imageVector = Icons.Default.Mic,
                     contentDescription = "Voice Input",
-                    tint = secondaryColor // 【変更】動的カラー適用
+                    tint = secondaryColor
                 )
             }
 
@@ -92,7 +92,7 @@ fun AbbozzoInput(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                cursorBrush = SolidColor(primaryColor), // 【変更】カーソル色も変更
+                cursorBrush = SolidColor(primaryColor),
                 singleLine = false,
                 maxLines = 3,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
