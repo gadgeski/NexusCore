@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.Abbozzo" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Renamed from Theme.Abbozzo to Theme.NexusCore -->
+    <style name="Theme.NexusCore" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
